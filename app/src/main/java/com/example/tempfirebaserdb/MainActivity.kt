@@ -20,7 +20,9 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private var stuList  : MutableLiveData<ArrayList<Student>> = MutableLiveData()
+    private var stuList: MutableLiveData<ArrayList<Student>> = MutableLiveData()
+    private var userList: ArrayList<User> = arrayListOf()
+    private var list: ArrayList<String> = arrayListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -51,32 +53,32 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
 
-        val dbRef = Firebase.database
-        val classesRef = dbRef.getReference("classes")
-        val classARef = classesRef.child("classA")
-        val classAMap = mapOf<String,Any>(
-            "subject" to "Math"
-        )
-        classARef.setValue(classAMap)
-
-        val stu1AttendanceMap = mapOf<String,Any>(
-            "2024-06-01" to "present",
-            "2024-06-02" to "absent"
-        )
-        val stu2AttendanceMap = mapOf<String,Any>(
-            "2024-06-01" to "present",
-            "2024-06-02" to "absent"
-        )
-        val student1Map = mapOf<String, Any>(
-            "name" to "Alice",
-            "attendance" to stu1AttendanceMap
-        )
-        val student1Ref = classARef.child("students").child("student1")
-        student1Ref.setValue(student1Map)
-        val student2 = StudentClass(name = "Bob", attendance = stu2AttendanceMap)
-
-        val student2Ref = classARef.child("students").child("student2")
-        student2Ref.setValue(student2)
+//        val dbRef = Firebase.database
+//        val classesRef = dbRef.getReference("classes")
+//        val classARef = classesRef.child("classA")
+//        val classAMap = mapOf<String,Any>(
+//            "subject" to "Math"
+//        )
+//        classARef.setValue(classAMap)
+//
+//        val stu1AttendanceMap = mapOf<String,Any>(
+//            "2024-06-01" to "present",
+//            "2024-06-02" to "absent"
+//        )
+//        val stu2AttendanceMap = mapOf<String,Any>(
+//            "2024-06-01" to "present",
+//            "2024-06-02" to "absent"
+//        )
+//        val student1Map = mapOf<String, Any>(
+//            "name" to "Alice",
+//            "attendance" to stu1AttendanceMap
+//        )
+//        val student1Ref = classARef.child("students").child("student1")
+//        student1Ref.setValue(student1Map)
+//        val student2 = StudentClass(name = "Bob", attendance = stu2AttendanceMap)
+//
+//        val student2Ref = classARef.child("students").child("student2")
+//        student2Ref.setValue(student2)
 //
 //        binding.btn.setOnClickListener {
 //            val dbKey = dbRef.push()
@@ -106,7 +108,48 @@ class MainActivity : AppCompatActivity() {
 //            delay(3000)
 //            dbRef.setValue("Hello..")
 //        }
-    }
+
+//        val dbRef = Firebase.database
+//        val usersRef = dbRef.getReference("users")
+//        val user1 = User(name = "First", age = 20)
+//        val user2 = User(name = "Second", age = 30)
+//        val user3 = User(name = "Third", age = 28)
+//        val user1Ref = usersRef.child("user1")
+//        val user2Ref = usersRef.child("user2")
+//        val user3Ref = usersRef.child("user3")
+//        user1Ref.setValue(user1)
+//        user2Ref.setValue(user2)
+//        user3Ref.setValue(user3)
+
+//        val query = usersRef.orderByChild("age")
+//        val query = usersRef.orderByChild("age").startAt(28.0)
+//        val query = usersRef.orderByChild("age").endAt(28.0)
+//        val query = usersRef.orderByChild("age").startAt(21.0).endAt(29.0)
+//        val query = usersRef.orderByChild("age").equalTo(28.0)
+//        val query = usersRef.orderByChild("age").endAt(29.0).limitToFirst(1)
+//        val query = usersRef.orderByChild("age").endAt(29.0).limitToLast(1)
+//        val query = usersRef.orderByChild("age").limitToLast(2)
+//        val query = usersRef.orderByChild("name").startAt("A").endAt("Z")
+//        val query = usersRef.orderByChild("name")
+//
+//        query.addListenerForSingleValueEvent(object : ValueEventListener{
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                for (userSnap in snapshot.children){
+//                    if(userSnap.exists()){
+//                        val user = userSnap.getValue(User::class.java)
+//                        if (user != null){
+//                            userList.add(user)
+//                        }
+//                    }
+//                }
+//                userList.reverse()
+//                println("Edrr" + userList)
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {}
+//        })
+//
+//    }
 //    fun updateValue(ref : DatabaseReference, map : Map<String,Any>){
 //        ref.updateChildren(map)
 //    }
@@ -114,4 +157,43 @@ class MainActivity : AppCompatActivity() {
 //    fun deleteValue(ref : DatabaseReference){
 //        ref.removeValue()
 //    }
+
+        val dbRef = Firebase.database
+        val usersRef = dbRef.getReference("Users")
+//        val query = usersRef.orderByKey()
+        val query = usersRef.orderByValue().limitToLast(2)
+//        val userMap=mapOf<String, Any>(
+//            "First" to 12,
+//            "Second" to 34,
+//            "third" to 23,
+//            "fourth" to 10
+//        )
+//        usersRef.child("First").setValue(12)
+//        usersRef.child("Second").setValue(42)
+//        usersRef.child("Third").setValue(22)
+//        usersRef.child("Fourth").setValue(32)
+//        usersRef.setValue(userMap)
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (userSnap in snapshot.children) {
+                    val userKey = userSnap.key
+                    val userValue = userSnap.value
+                    if (userValue != null) {
+
+                        list.add("$userKey : $userValue")
+
+                    }
+                }
+                list.reverse()
+                println("edrr  $list")
+            }
+
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
+    }
 }

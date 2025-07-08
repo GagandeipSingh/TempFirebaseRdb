@@ -9,7 +9,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.example.tempfirebaserdb.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -131,23 +134,42 @@ class MainActivity : AppCompatActivity() {
 //        val query = usersRef.orderByChild("age").limitToLast(2)
 //        val query = usersRef.orderByChild("name").startAt("A").endAt("Z")
 //        val query = usersRef.orderByChild("name")
+
+//        val database = Firebase.database
 //
-//        query.addListenerForSingleValueEvent(object : ValueEventListener{
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                for (userSnap in snapshot.children){
-//                    if(userSnap.exists()){
-//                        val user = userSnap.getValue(User::class.java)
-//                        if (user != null){
-//                            userList.add(user)
+//        val ref = database.getReference("users")
+//        val auth = Firebase.auth
+//        val currentUser = auth.currentUser
+//
+//        auth.signInWithEmailAndPassword("first@gmail.com","12345678").addOnCompleteListener { task ->
+//            if(task.isSuccessful){
+//                val currentUser = auth.currentUser?.uid
+//                println("Edrr $currentUser")
+//            }
+//        }
+//        if(currentUser != null){
+//            ref.addListenerForSingleValueEvent(object : ValueEventListener{
+//                override fun onDataChange(snapshot: DataSnapshot) {
+//                    for (userSnap in snapshot.children){
+//                        if(userSnap.exists()){
+//                            val user = userSnap.getValue(User::class.java)
+//                            if (user != null){
+//                                userList.add(user)
+//                            }
 //                        }
 //                    }
+//                    userList.reverse()
+//                    println("Edrr" + userList)
 //                }
-//                userList.reverse()
-//                println("Edrr" + userList)
-//            }
 //
-//            override fun onCancelled(error: DatabaseError) {}
-//        })
+//                override fun onCancelled(error: DatabaseError) {
+//                    println("Edrr ${error.message}")
+//                }
+//            })
+//        } else{
+//            Snackbar.make(binding.root,"You are not Signed In..", Snackbar.LENGTH_INDEFINITE).show()
+//        }
+
 //
 //    }
 //    fun updateValue(ref : DatabaseReference, map : Map<String,Any>){
@@ -158,10 +180,10 @@ class MainActivity : AppCompatActivity() {
 //        ref.removeValue()
 //    }
 
-        val dbRef = Firebase.database
-        val usersRef = dbRef.getReference("Users")
+//        val dbRef = Firebase.database
+//        val usersRef = dbRef.getReference("Users")
 //        val query = usersRef.orderByKey()
-        val query = usersRef.orderByValue().limitToLast(2)
+//        val query = usersRef.orderByValue().limitToLast(2)
 //        val userMap=mapOf<String, Any>(
 //            "First" to 12,
 //            "Second" to 34,
@@ -173,24 +195,67 @@ class MainActivity : AppCompatActivity() {
 //        usersRef.child("Third").setValue(22)
 //        usersRef.child("Fourth").setValue(32)
 //        usersRef.setValue(userMap)
-        query.addListenerForSingleValueEvent(object : ValueEventListener {
+//        query.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                for (userSnap in snapshot.children) {
+//                    val userKey = userSnap.key
+//                    val userValue = userSnap.value
+//                    if (userValue != null) {
+//
+//                        list.add("$userKey : $userValue")
+//
+//                    }
+//                }
+//                list.reverse()
+//                println("edrr  $list")
+//            }
+//
+//
+//            override fun onCancelled(error: DatabaseError) {
+//
+//            }
+//
+//        })
+
+
+        // Firebase Auth
+
+//        val auth = FirebaseAuth.getInstance()
+//        var currentUser = auth.currentUser?.uid
+//        println("Edrr $currentUser")
+//        auth.signOut()
+//        currentUser = auth.currentUser?.uid
+//        println("Edrr $currentUser")
+
+//        auth.createUserWithEmailAndPassword("second@gmail.com","12345678").addOnCompleteListener { task ->
+//            if(task.isSuccessful){
+//                val currentUser = auth.currentUser?.uid
+//                println("Edrr $currentUser")
+//            }
+//        }
+        val auth= Firebase.auth
+//        auth.signInWithEmailAndPassword("second@gmail.com","12345678").addOnCompleteListener { task ->
+//            if(task.isSuccessful){
+//                val currentUser = auth.currentUser?.uid
+//                println("Edrr $currentUser")
+//            }
+//        }
+//
+        val currentUser=auth.currentUser?.uid
+
+
+        val dbRef= Firebase.database
+        val ref=dbRef.getReference("Users")
+//        val stu1Ref=ref.child("C8IawjbdDGWHRuzww4l1xTPVtP12")
+//        val stu1= StudentClass("One","First")
+//        stu1Ref.setValue(stu1)
+        ref.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                for (userSnap in snapshot.children) {
-                    val userKey = userSnap.key
-                    val userValue = userSnap.value
-                    if (userValue != null) {
-
-                        list.add("$userKey : $userValue")
-
-                    }
-                }
-                list.reverse()
-                println("edrr  $list")
+                println("edrr ${snapshot}")
             }
 
-
             override fun onCancelled(error: DatabaseError) {
-
+                println("edrr ${error.message}")
             }
 
         })
